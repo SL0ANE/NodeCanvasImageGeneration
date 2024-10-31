@@ -12,8 +12,8 @@ float _Height;
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
     float sdf = _PreviousBuffer[id.xy].r;
-    float outline = smoothstep((4.0 + WIDTH) / _Width, (3.0 + WIDTH) / _Width, sdf);
-    outline = lerp(0.0, outline, smoothstep(2.0 / _Width, 3.0 / _Width, sdf));
+    float outline = smoothstep((4.5 + WIDTH) / _Width, (3.0 + WIDTH) / _Width, sdf);
+    outline = lerp(0.0, outline, smoothstep(1.5 / _Width, 3.0 / _Width, sdf));
 
     float3 outputColor = lerp(float3(0.98, 0.52, 0.52), float3(64.0, 32.0, 32.0) / 255.0, outline);
     _CurrentBuffer[id.xy] = float4(outputColor, 1.0);

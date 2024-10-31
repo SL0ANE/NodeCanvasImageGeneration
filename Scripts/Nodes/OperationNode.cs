@@ -13,11 +13,12 @@ namespace Sloane.ImageGraph
         {
             get
             {
-                return new RenderTextureDescriptor(Width, Height, RenderTextureFormat.ARGB64, 0)
+                var output = new RenderTextureDescriptor(Width, Height, RenderTextureFormat.ARGBFloat, 0, 1)
                 {
-                    sRGB = true,
                     enableRandomWrite = true
                 };
+
+                return output;
             }
         }
         protected RenderTexture OperatingTexture

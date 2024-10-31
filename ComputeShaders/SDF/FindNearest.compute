@@ -19,28 +19,97 @@ int DistanceSquared(uint2 a, uint2 b)
 }
 
 [numthreads(8,8,1)]
-void CSMain (uint3 id : SV_DispatchThreadID)
+void CSMain(uint3 id : SV_DispatchThreadID)
 {
     uint2 currentCoord = id.xy;
-    uint2 currentSeed = uint2(uint(_PreviousBuffer[currentCoord].x * _Width), uint(_PreviousBuffer[currentCoord].y * _Height));
 
-    if(_PreviousBuffer[currentCoord].z > 0.5) return;
-    bool fillData = false;
-
-    for(uint i = 0; i < _Width; i++)
+    if (_PreviousBuffer[currentCoord].z > 0.5)
     {
-        for(uint j = 0; j < _Height; j++)
-        {
-            uint2 neighborCoord = uint2(i, j);
-            if(_PreviousBuffer[neighborCoord].z < 0.5) continue;
+        _CurrentBuffer[currentCoord] = _PreviousBuffer[currentCoord];
+        return;
+    }
 
-            if(DistanceSquared(neighborCoord, currentCoord) < DistanceSquared(currentSeed, currentCoord) || !fillData)
+    bool found = false;
+    int minDistance = int(_Width * _Width + _Height * _Height); // 初始化为最大可能距离
+    uint2 currentSeed = currentCoord;
+
+    // 按回字形向外遍历
+    int maxRadius = max(max(int(_Width - id.x - 1), int(id.x)), max(int(_Height - id.y - 1), int(id.y)));
+    for (int radius = 1; radius <= maxRadius; radius++)
+    {
+        if (minDistance < radius * radius) break;
+        // 遍历上边界
+        for (int i = -radius; i <= radius; i++)
+        {
+            int2 neighborCoordSigned = int2(currentCoord) + int2(i, -radius);
+            if (neighborCoordSigned.x < 0 || neighborCoordSigned.x >= int(_Width) || neighborCoordSigned.y < 0 || neighborCoordSigned.y >= int(_Height)) continue;
+
+            uint2 neighborCoord = uint2(neighborCoordSigned);
+            if (_PreviousBuffer[neighborCoord].z < 0.5) continue;
+
+            int distance = DistanceSquared(neighborCoord, currentCoord);
+            if (distance < minDistance)
             {
-                fillData = true;
+                minDistance = distance;
                 currentSeed = neighborCoord;
+                found = true;
+            }
+        }
+
+        // 遍历下边界
+        for (int i = -radius; i <= radius; i++)
+        {
+            int2 neighborCoordSigned = int2(currentCoord) + int2(i, radius);
+            if (neighborCoordSigned.x < 0 || neighborCoordSigned.x >= int(_Width) || neighborCoordSigned.y < 0 || neighborCoordSigned.y >= int(_Height)) continue;
+
+            uint2 neighborCoord = uint2(neighborCoordSigned);
+            if (_PreviousBuffer[neighborCoord].z < 0.5) continue;
+
+            int distance = DistanceSquared(neighborCoord, currentCoord);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                currentSeed = neighborCoord;
+                found = true;
+            }
+        }
+
+        // 遍历左边界
+        for (int j = -radius + 1; j <= radius - 1; j++)
+        {
+            int2 neighborCoordSigned = int2(currentCoord) + int2(-radius, j);
+            if (neighborCoordSigned.x < 0 || neighborCoordSigned.x >= int(_Width) || neighborCoordSigned.y < 0 || neighborCoordSigned.y >= int(_Height)) continue;
+
+            uint2 neighborCoord = uint2(neighborCoordSigned);
+            if (_PreviousBuffer[neighborCoord].z < 0.5) continue;
+
+            int distance = DistanceSquared(neighborCoord, currentCoord);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                currentSeed = neighborCoord;
+                found = true;
+            }
+        }
+
+        // 遍历右边界
+        for (int j = -radius + 1; j <= radius - 1; j++)
+        {
+            int2 neighborCoordSigned = int2(currentCoord) + int2(radius, j);
+            if (neighborCoordSigned.x < 0 || neighborCoordSigned.x >= int(_Width) || neighborCoordSigned.y < 0 || neighborCoordSigned.y >= int(_Height)) continue;
+
+            uint2 neighborCoord = uint2(neighborCoordSigned);
+            if (_PreviousBuffer[neighborCoord].z < 0.5) continue;
+
+            int distance = DistanceSquared(neighborCoord, currentCoord);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                currentSeed = neighborCoord;
+                found = true;
             }
         }
     }
 
-    _CurrentBuffer[currentCoord] = float4(float(currentSeed.x) / _Width, float(currentSeed.y) / _Height, 0.75, 1.0);
+    _CurrentBuffer[currentCoord] = float4(float(currentSeed.x) / _Width, float(currentSeed.y) / _Height, 1.0, 1.0);
 }
