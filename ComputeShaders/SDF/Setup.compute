@@ -1,0 +1,17 @@
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
+
+#pragma kernel CSMain
+
+Texture2D<float4> _PreviousBuffer;
+RWTexture2D<float4> _CurrentBuffer;
+
+uint _Width;
+uint _Height;
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    float v = RgbToHsv(_PreviousBuffer[id.xy].rgb).z;
+
+    _CurrentBuffer[id.xy] = float4(float(id.x) / float(_Width), float(id.y) / float(_Height), step(0.1, v), 1.0);
+}

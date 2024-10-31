@@ -1,0 +1,46 @@
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
+
+#pragma kernel CSMain
+
+Texture2D<float4> _PreviousBuffer;
+RWTexture2D<float4> _CurrentBuffer;
+
+uint _Width;
+uint _Height;
+
+uint _IterationTime;
+uint _Iteration;
+
+int DistanceSquared(uint2 a, uint2 b)
+{
+    int dx = a.x - b.x;
+    int dy = a.y - b.y;
+    return dx * dx + dy * dy;
+}
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    uint2 currentCoord = id.xy;
+    uint2 currentSeed = uint2(uint(_PreviousBuffer[currentCoord].x * _Width), uint(_PreviousBuffer[currentCoord].y * _Height));
+
+    if(_PreviousBuffer[currentCoord].z > 0.5) return;
+    bool fillData = false;
+
+    for(uint i = 0; i < _Width; i++)
+    {
+        for(uint j = 0; j < _Height; j++)
+        {
+            uint2 neighborCoord = uint2(i, j);
+            if(_PreviousBuffer[neighborCoord].z < 0.5) continue;
+
+            if(DistanceSquared(neighborCoord, currentCoord) < DistanceSquared(currentSeed, currentCoord) || !fillData)
+            {
+                fillData = true;
+                currentSeed = neighborCoord;
+            }
+        }
+    }
+
+    _CurrentBuffer[currentCoord] = float4(float(currentSeed.x) / _Width, float(currentSeed.y) / _Height, 0.75, 1.0);
+}

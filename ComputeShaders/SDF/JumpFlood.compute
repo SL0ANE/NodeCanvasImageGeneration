@@ -1,0 +1,55 @@
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
+
+#pragma kernel CSMain
+
+Texture2D<float4> _PreviousBuffer;
+RWTexture2D<float4> _CurrentBuffer;
+
+uint _Width;
+uint _Height;
+
+uint _IterationTime;
+uint _Iteration;
+
+int DistanceSquared(uint2 a, uint2 b)
+{
+    int dx = int(a.x) - int(b.x);
+    int dy = int(a.y) - int(b.y);
+    return dx * dx + dy * dy;
+}
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    uint step = pow(2, _IterationTime - _Iteration - 1);
+    uint2 currentCoord = id.xy;
+    float width = float(_Width);
+    float height = float(_Height);
+    uint2 currentSeed = uint2(uint(round(_CurrentBuffer[currentCoord].x * width)), uint(round(_CurrentBuffer[currentCoord].y * height)));
+
+    if(_CurrentBuffer[currentCoord].z < 0.5) return;
+
+    for(int i = -1; i <= 1; i++)
+    {
+        for(int j = -1; j <= 1; j++)
+        {
+            int2 neighborCoordSigned = int2(currentCoord) + int2(i, j) * step;
+            if(neighborCoordSigned.x < 0 || neighborCoordSigned.x >= int(_Width) || neighborCoordSigned.y < 0 || neighborCoordSigned.y >= int(_Height)) continue;
+            if(i == 0 && j == 0) continue;
+            
+            uint2 neighborCoord = uint2(neighborCoordSigned);
+            uint2 neighborSeed = uint2(uint(_CurrentBuffer[neighborCoord].x * width), uint(_CurrentBuffer[neighborCoord].y * height));
+
+            if(neighborSeed.x == currentSeed.x && neighborSeed.y == currentSeed.y) continue;
+
+            bool fillData = false;
+            if(_CurrentBuffer[neighborCoord].z < 0.5) fillData = true;
+            else if(DistanceSquared(neighborCoord, neighborSeed) > DistanceSquared(neighborCoord, currentSeed)) fillData = true;
+
+            if(fillData)
+            {
+                _CurrentBuffer[neighborCoord] = float4(float(currentSeed.x) / width, float(currentSeed.y) / height, 1.0, 1.0);
+            }
+        }
+    }
+}

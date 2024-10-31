@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7eed046d2618f5438a47f9900f63f32, type: 3}
+  m_Name: Prototype
+  m_EditorClassIdentifier: 
+  _serializedGraph: '{"type":"Sloane.ImageGraph.ImageGraph","nodes":[{"m_InputTexture":1,"_position":{"x":-694.4108,"y":-436.1808},"$type":"Sloane.ImageGraph.InputImageNode","$id":"0"},{"m_ComputeShader":2,"m_PropertyNames":["_CurrentBuffer"],"_position":{"x":-408.2405,"y":-434.9413},"$type":"Sloane.ImageGraph.ComputeShaderNode","$id":"1"},{"m_ComputeShader":3,"m_PropertyNames":["_CurrentBuffer"],"m_IterationsTime":32,"_position":{"x":-99.78802,"y":-438.9176},"$type":"Sloane.ImageGraph.ComputeShaderNode","$id":"2"},{"m_ComputeShader":4,"m_PropertyNames":["_CurrentBuffer"],"_position":{"x":-699.3033,"y":-152.9578},"$type":"Sloane.ImageGraph.ComputeShaderNode","$id":"3"},{"m_ComputeShader":5,"m_PropertyNames":["_CurrentBuffer"],"_position":{"x":-411.362,"y":-150.1863},"$type":"Sloane.ImageGraph.ComputeShaderNode","$id":"4"},{"_position":{"x":-118.4494,"y":-152.651},"$type":"Sloane.ImageGraph.OutputNode","$id":"5"},{"m_ComputeShader":6,"m_PropertyNames":["_CurrentBuffer"],"_position":{"x":-985.1846,"y":82.60905},"$type":"Sloane.ImageGraph.ComputeShaderNode","$id":"6"},{"m_ComputeShader":4,"m_PropertyNames":["_CurrentBuffer"],"_position":{"x":-690.1273,"y":85.56001},"$type":"Sloane.ImageGraph.ComputeShaderNode","$id":"7"}],"connections":[{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"Sloane.ImageGraph.ImageGraphConnection"},{"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"Sloane.ImageGraph.ImageGraphConnection"},{"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"6"},"$type":"Sloane.ImageGraph.ImageGraphConnection"},{"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"3"},"$type":"Sloane.ImageGraph.ImageGraphConnection"},{"_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"4"},"$type":"Sloane.ImageGraph.ImageGraphConnection"},{"_sourceNode":{"$ref":"4"},"_targetNode":{"$ref":"5"},"$type":"Sloane.ImageGraph.ImageGraphConnection"},{"_sourceNode":{"$ref":"6"},"_targetNode":{"$ref":"7"},"$type":"Sloane.ImageGraph.ImageGraphConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{}}}'
+  _objectReferences:
+  - {fileID: 0}
+  - {fileID: 2800000, guid: cb4e5c46abbd0a042bdf2ddcb0201d3a, type: 3}
+  - {fileID: 7200000, guid: f9120751bac67714b995a64a7175de01, type: 3}
+  - {fileID: 7200000, guid: ccc0b1bcfedbabe48b144326918cb346, type: 3}
+  - {fileID: 7200000, guid: 9b6a0f4f3fc53a445b95b182de9e3415, type: 3}
+  - {fileID: 7200000, guid: 5c6556423ed4e604ca77b1ee3d9611b3, type: 3}
+  - {fileID: 7200000, guid: 376ee51047b70c948913dd582869439b, type: 3}
+  _graphSource:
+    _version: 3.3
+    _category: 
+    _comments: 
+    _translation: {x: 600.86115, y: 257.78232}
+    _zoomFactor: 0.5437461
+  _haltSerialization: 0
+  _externalSerializationFile: {fileID: 0}
+  m_OutputNodeID: 7
